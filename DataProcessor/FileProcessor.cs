@@ -75,7 +75,7 @@ namespace DataProcessor
             string completedDirectoryPath = Path.Combine(rootDirectoryPath, CompletedDirectoryName);
             Directory.CreateDirectory(completedDirectoryPath);
 
-            WriteLine($"Movinf {inProgressFilePath} to {completedDirectoryPath}");
+            WriteLine($"Moving {inProgressFilePath} to {completedDirectoryPath}");
             //File.Move(inProgressFilePath, Path.Combine(completedDirectoryPath, inputFileName));
 
             var completedFileName = $"{Path.GetFileNameWithoutExtension(InputFilePath)}-{Guid.NewGuid()}{extension}";

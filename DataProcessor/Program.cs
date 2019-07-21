@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace DataProcessor
 {
@@ -46,8 +47,24 @@ namespace DataProcessor
             fileProcessor.Process();
         }
 
-        private static void ProcessDirectory(string directoryPath, string filePath)
+        private static void ProcessDirectory(string directoryPath, string fileType)
         {
+            //var allFiles = Directory.GetFiles(directoryPath); // to get all files
+
+            switch (fileType)
+            {
+                case "TEXT":
+                    string[] textFiles = Directory.GetFiles(directoryPath, "*.txt");
+                    foreach(var textFilePath in textFiles)
+                    {
+                        var fileProcessor = new FileProcessor(textFilePath);
+                        fileProcessor.Process();
+                    }
+                    break;
+                default:
+                    WriteLine($"ERROR: {fileType} is not supported");
+                    return;
+            }
         }
     }
 }
