@@ -39,6 +39,12 @@ namespace DataProcessor
                 //WriteLine($"Creating {backupDirectoryPath}");
                 Directory.CreateDirectory(backupDirectoryPath); //won't throw exception if directory already exists
             //}
+
+            //copy file to backup dir
+            string inputFileName = Path.GetFileName(InputFilePath);
+            string backupFilePath = Path.Combine(backupDirectoryPath, inputFileName);
+            WriteLine($"Copying {InputFilePath} to {backupFilePath}");
+            File.Copy(InputFilePath, backupFilePath, true); //true for overwrite, so that if file already exists, exception is not thrown
         }
     }
 }
