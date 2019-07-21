@@ -1,5 +1,6 @@
 ﻿using static System.Console;
 using System.IO;
+using System;
 
 namespace DataProcessor
 {
@@ -58,6 +59,36 @@ namespace DataProcessor
 
             WriteLine($"Moving {InputFilePath} to {inProgressFilePath}");
             File.Move(InputFilePath, inProgressFilePath);
+
+            //Determine type of File
+            string extension = Path.GetExtension(InputFilePath);
+            switch (extension)
+            {
+                case ".txt":
+                    ProcessTextFile(inProgressFilePath);
+                    break;
+                default:
+                    WriteLine($"{extension} is unsupported file type.");
+                    break;
+            }
+
+            string completedDirectoryPath = Path.Combine(rootDirectoryPath, CompletedDirectoryName);
+            Directory.CreateDirectory(completedDirectoryPath);
+
+            WriteLine($"Movinf {inProgressFilePath} to {completedDirectoryPath}");
+            //File.Move(inProgressFilePath, Path.Combine(completedDirectoryPath, inputFileName));
+
+            var completedFileName = $"{Path.GetFileNameWithoutExtension(InputFilePath)}-{Guid.NewGuid()}{extension}";
+            //completedFileName = Path.ChangeExtension(completedFileName, ".complete");
+            var completedFilePath = Path.Combine(completedDirectoryPath, completedFileName); 
+            File.Move(inProgressFilePath, completedFilePath);
+        }
+
+        private void ProcessTextFile(string inProgressFilePath)
+        {
+            WriteLine($"Processing Text File {inProgressFilePath}");
+
+            //Read in and process
         }
     }
 }
