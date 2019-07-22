@@ -261,4 +261,4 @@ __pycache__/
 *.pyc
 
 # Data Folder
-psdata/
+/psdata/**
