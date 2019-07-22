@@ -14,31 +14,61 @@ namespace DataProcessor
         {
             WriteLine("Parsing Command Line Options");
 
-            //command line validation ommited for brevity
-             
-            var command = args[0];
+            var directoryToWatch = args[0];
 
-            if (command == "--file")
+            if (!Directory.Exists(directoryToWatch))
             {
-                var filePath = args[1];
-                WriteLine($"Single file {filePath} selected");
-                ProcessSingleFile(filePath);
-            }
-            else if (command == "--dir")
-            {
-                var directoryPath = args[1];
-                var fileType = args[2];
-                WriteLine($"Directory {directoryPath} selected for {fileType} files");
-                ProcessDirectory(directoryPath, fileType);
+                WriteLine($"ERROR: {directoryToWatch} does not exist");
             }
             else
             {
-                WriteLine("Invalid Command line options");
+                WriteLine($"Watching directory {directoryToWatch} for changes");
+
+                using (var inputFileWatcher = new FileSystemWatcher(directoryToWatch))
+                {
+                    inputFileWatcher.IncludeSubdirectories = false;
+                    inputFileWatcher.InternalBufferSize = 32768; //32KB, default:8KB
+                    inputFileWatcher.Filter = "*.*";
+                    //inputFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
+                    inputFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+
+                    inputFileWatcher.Created += FileCreated;
+                    inputFileWatcher.Changed += FileChanged;
+                    inputFileWatcher.Deleted += FileDeleted;
+                    inputFileWatcher.Renamed += FileRenamed;
+                    inputFileWatcher.Error += WatchError;
+
+                    inputFileWatcher.EnableRaisingEvents = true;
+
+                    WriteLine("Press Enter to quit");
+                    ReadLine();
+                }
             }
+        }
 
-            WriteLine("Press enter to quit");
-            ReadLine();
+        private static void FileCreated(object sender, FileSystemEventArgs e)
+        {
+            WriteLine($"* File created: {e.Name} - type: {e.ChangeType}");
+        }
 
+        private static void FileChanged(object sender, FileSystemEventArgs e)
+        {
+            WriteLine($"* File changed: {e.Name} - type: {e.ChangeType}");
+        }
+
+        private static void FileDeleted(object sender, FileSystemEventArgs e)
+        {
+            WriteLine($"* File Changed: {e.Name} - type: {e.ChangeType}");
+        }
+
+        private static void FileRenamed(object sender, RenamedEventArgs e)
+        {
+            WriteLine($"* File Renamed: {e.OldName} to {e.Name} - type: {e.ChangeType}");
+        }
+
+        private static void WatchError(object sender, ErrorEventArgs e)
+        {
+            WriteLine($"ERROR: file system watching may no longer be active: {e.GetException()}");
         }
 
         private static void ProcessSingleFile(string filePath)
