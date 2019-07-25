@@ -31,6 +31,8 @@ namespace DataProcessor
             {
                 WriteLine($"Watching directory {directoryToWatch} for changes");
 
+                ProcessExistingFiles(directoryToWatch);
+
                 using (var inputFileWatcher = new FileSystemWatcher(directoryToWatch))
                 //using (var timer =  new Timer(ProcessFiles, null, 0, 1000))
                 {
@@ -51,6 +53,17 @@ namespace DataProcessor
                     WriteLine("Press Enter to quit");
                     ReadLine();
                 }
+            }
+        }
+
+        private static void ProcessExistingFiles(string inputDirectory)
+        {
+            WriteLine($"Checking {inputDirectory} for existing files");
+
+            foreach (var filePath in Directory.EnumerateFiles(inputDirectory))
+            {
+                WriteLine($" - Found {filePath}");
+                AddToCache(filePath);
             }
         }
 
