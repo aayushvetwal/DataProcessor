@@ -83,8 +83,10 @@ namespace DataProcessor
             var completedFilePath = Path.Combine(completedDirectoryPath, completedFileName); 
             File.Move(inProgressFilePath, completedFilePath);
 
-            string inProgressDirectoryPath = Path.GetDirectoryName(inProgressFilePath);
-            Directory.Delete(inProgressDirectoryPath, true); //true to remove subdirectories and files
+            //string inProgressDirectoryPath = Path.GetDirectoryName(inProgressFilePath);
+            //Directory.Delete(inProgressDirectoryPath, true); //true to remove subdirectories and files
+            //commented the above lines that delete inProgress Directory because the filepaths in MemoryCache are processed parallely in threads, therefore even though
+            //one thread may have completed the process, another thread may still need the inProgress Directory.
         }
 
         private void ProcessTextFile(string inProgressFilePath)
